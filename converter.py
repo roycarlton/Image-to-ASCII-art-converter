@@ -1,6 +1,6 @@
 from PIL import Image, ImageFont, ImageDraw
 import numpy as np
-import sys
+import sys, os.path
 
 lotta_spaces = "                        "
 
@@ -45,32 +45,74 @@ def generate_character_images(min, max, font, font_size):
 
     return chr_imgs
 
+def generate_ASCII_art_image(text_rows, font, font_size, colour):
+    """Takes a list of text rows and returns an image displaying them"""
+
+    out_img = Image.new("RGB", (font_size * len(text_rows[0]), font_size * len(text_rows)))
+    draw = ImageDraw.Draw(out_img)
+
+    counter = 0
+    for row in text_rows:
+        draw.text((0, counter*font_size), row, colour, font=font)
+        counter += 1
+
+    return out_img
+
 if __name__ == "__main__":
 
+    output_dir = "out"
+    font_dir = "fonts"
+
     if len(sys.argv) == 4 or len(sys.argv) == 5:
-        in_img_name = sys.argv[1]
-        font_filename = sys.argv[2]
-        pixel_width = int(sys.argv[3])
+
+        input_dir = ""
+        if os.path.isdir(sys.argv[1]):
+            image_q = os.listdir(sys.argv[1])
+            input_dir = sys.argv[1] + "/"
+        elif os.path.isfile(sys.argv[1]):
+            image_q = [sys.argv[1]]
+        else:
+            print("\nFirst argument must be either a valid directory or image file.\n")
+            exit()
+
+        if os.path.isfile(font_dir + "/" + sys.argv[2]):
+            font_filename = font_dir + "/" + sys.argv[2]
+        else:
+            print("\nSecond argument must be a valid font file.\n")
+            exit()
+
+        if sys.argv[3].isdigit():
+            pixel_width = int(sys.argv[3])
+        else:
+            print("\nThird argument must be an integer.\n")
+            exit()
 
         #pixel width and height = size of each "pixel" we will take from the source img
         #and convert to a character. One "pixel" = one character
         #pixel_width = 2
         if len(sys.argv) == 5:
-            pixel_height = int(sys.argv[4])
+            if sys.argv[4].isdigit():
+                pixel_height = int(sys.argv[4])
+            else:
+                print("\nFourth argument must be an integer.\n")
+                exit()
         else:
             pixel_height = int(pixel_width * 1.4)
     
 
     else:
-        print("\nProgram requires either 3 or 4 arguments: source file name, font file name, pixel width, (optional) pixel height")
+        print("\nProgram requires either 3 or 4 arguments: source file name/dir name, font file name, pixel width, (optional) pixel height")
         print("For example: python converter.py image.jpg, font.ttf, 5\n")
+        exit()
+
+
+    if not os.path.isdir(output_dir):
+        print("\nThere must be a valid output directory named '"+ output_dir +"'\n")
         exit()
 
     font_size = 20
 
-    #font_filename = input("Enter font filename (including extension): ")
-    #font_filename = "mono.ttf"
-    font = ImageFont.truetype("fonts/" + font_filename, font_size, encoding="utf-8")
+    font = ImageFont.truetype(font_filename, font_size, encoding="utf-8")
 
     chr_imgs = generate_character_images(33, 127, font, font_size)
 
@@ -84,59 +126,70 @@ if __name__ == "__main__":
     # input()
     # exit()
 
-    #in_img_name = input("Enter input image filename: ")
-    #in_img_name = "test.jpg"
-    in_img = Image.open(in_img_name).convert("1")
-    #print(in_img.width)
+    counter = 0
+    for in_img_name in image_q:
 
-    # in_img.show()
-    # input()
+        in_img = Image.open(input_dir + in_img_name).convert("1")
 
-    im_height = in_img.height
-    im_width = in_img.width
+        # in_img.show()
+        # input()
 
-    pixel_rows = im_height // pixel_height
-    pixel_cols = im_width // pixel_width
+        im_height = in_img.height
+        im_width = in_img.width
 
-    text_rows = []
+        pixel_rows = im_height // pixel_height
+        pixel_cols = im_width // pixel_width
 
-    print()
+        text_rows = []
 
-    #Crop each pixel and compare it to every character image we got earlier
-    #Most similar character gets added to represent that "pixel"
-    for row in range(pixel_rows):
-        print("Converting row " + str(row) + " / " + str(pixel_rows), end="\r")
-        temp_text_row = ""
-        for col in range(pixel_cols):
-            img_crop = in_img.crop((col*pixel_width, row*pixel_height, ((col+1)*pixel_width)-1, ((row+1)*pixel_height)-1))
-            #img_crop = img_crop.resize((font_size, font_size), Image.LANCZOS)
-            img_crop = img_crop.resize((font_size, font_size))
+        print("Working on: " + in_img_name)
 
-            # img_crop.show()
-            # input()
+        #Crop each pixel and compare it to every character image we got earlier
+        #Most similar character gets added to represent that "pixel"
+        for row in range(pixel_rows):
+            print("Converting row " + str(row) + " / " + str(pixel_rows), end="\r")
+            temp_text_row = ""
+            for col in range(pixel_cols):
+                img_crop = in_img.crop((col*pixel_width, row*pixel_height, ((col+1)*pixel_width)-1, ((row+1)*pixel_height)-1))
+                #img_crop = img_crop.resize((font_size, font_size), Image.LANCZOS)
+                img_crop = img_crop.resize((font_size, font_size))
 
-            highest = 0
-            closest_chr = "."
-            for key in chr_imgs:
-                temp_score = similarity_score(img_crop, chr_imgs[key])
-                if temp_score > highest:
-                    highest = temp_score
-                    closest_chr = key
+                # img_crop.show()
+                # input()
 
-            # chr_imgs[closest_chr].show()
-            # input()
+                highest = 0
+                closest_chr = "."
+                for key in chr_imgs:
+                    temp_score = similarity_score(img_crop, chr_imgs[key])
+                    if temp_score > highest:
+                        highest = temp_score
+                        closest_chr = key
 
-            temp_text_row += closest_chr
-        text_rows.append(temp_text_row)
-        #print(temp_text_row)
+                # chr_imgs[closest_chr].show()
+                # input()
 
-    print("Finished!" + lotta_spaces + "\n")
+                temp_text_row += closest_chr
+            text_rows.append(temp_text_row)
+            #print(temp_text_row)
 
-    with open("out_text.txt", "w") as file:
-        for row in text_rows:
-            file.write(row + "\n")
+        print("Finished converting " + in_img_name + lotta_spaces + "\n")
 
-    print("\nGenerated ASCII Written to out_text.txt\n")
+        stub_filename = output_dir + "/" + str(counter).zfill(4)
+        text_filename = stub_filename + ".txt"
+        image_filename = stub_filename + ".jpg"
+        with open(text_filename, "w") as file:
+            for row in text_rows:
+                file.write(row + "\n")
+
+        print("\nGenerated ASCII written to " + text_filename)
+
+        ASCII_image = generate_ASCII_art_image(text_rows, font, font_size, "white")
+
+        ASCII_image.save(image_filename)
+
+        print("\nGenerated image written to " + image_filename)
+
+        counter += 1
 
 
     # print("height: " + str(im_height))
