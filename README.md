@@ -16,7 +16,9 @@ Fonts must be placed in the "font" directory to be accessible.
 Works best with large images.
 
 To do:
- - Functionality to generate an image file of the ASCII art (currently the only output is text)
+ - ~~Functionality to generate an image file of the ASCII art (currently the only output is text)~~
  - Functionality to convert whole directories
  - Functionality to convert gifs by separating into frames, converting and reassembling
  - Add options for effects e.g. different colours or scrolling characters in the blank space/background
+
+![ASCII lain](https://hello-room.neocities.org/images/ASCII_lain.jpg)
