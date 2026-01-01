@@ -13,11 +13,13 @@ The font file I recommend (and the only one I have tested with) is SpaceMono-Reg
 
 Fonts must be placed in the "font" directory to be accessible.
 
+There must be a directory named "out" in the same directory as "converter.py" as this is where all output will be written.
+
 Works best with large images.
 
 To do:
  - ~~Functionality to generate an image file of the ASCII art (currently the only output is text)~~
- - Functionality to convert whole directories
+ - ~~Functionality to convert whole directories~~
  - Functionality to convert gifs by separating into frames, converting and reassembling
  - Add options for effects e.g. different colours or scrolling characters in the blank space/background
 
