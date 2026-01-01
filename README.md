@@ -11,7 +11,7 @@ Later, when the program will output an image of the ASCII art, it will also use 
 
 The font file I recommend (and the only one I have tested with) is SpaceMono-Regular.ttf, found here: https://fonts.google.com/specimen/Space+Mono
 
-Fonts must be placed in the "font" directory to be accessible.
+Fonts must be placed in the "fonts" directory to be accessible.
 
 There must be a directory named "out" in the same directory as "converter.py" as this is where all output will be written.
 
