@@ -2,6 +2,8 @@ from PIL import Image, ImageFont, ImageDraw
 import numpy as np
 import sys
 
+lotta_spaces = "                        "
+
 def similarity_score(im1, im2):
     """Compare similarity of 2 black and white images of the same size. Score = num of identical pixels"""
     w1 = im1.width
@@ -20,7 +22,7 @@ def similarity_score(im1, im2):
                 score += 1
     return score
 
-def generate_character_images(min, max, font):
+def generate_character_images(min, max, font, font_size):
     """Load images of each character into a dictionary and return."""
 
     chr_imgs = {}
@@ -60,17 +62,27 @@ if __name__ == "__main__":
     
 
     else:
-        print("\nProgram requires exactly 3 arguments: source file name, font file name, pixel width")
+        print("\nProgram requires either 3 or 4 arguments: source file name, font file name, pixel width, (optional) pixel height")
         print("For example: python converter.py image.jpg, font.ttf, 5\n")
         exit()
 
-    font_size = 15
+    font_size = 20
 
     #font_filename = input("Enter font filename (including extension): ")
     #font_filename = "mono.ttf"
     font = ImageFont.truetype("fonts/" + font_filename, font_size, encoding="utf-8")
 
-    chr_imgs = generate_character_images(33, 127, font)
+    chr_imgs = generate_character_images(33, 127, font, font_size)
+
+    # chr_imgs["a"].show()
+    # input()
+    # chr_imgs["!"].show()
+    # input()
+    # chr_imgs["0"].show()
+    # input()
+    # chr_imgs["W"].show()
+    # input()
+    # exit()
 
     #in_img_name = input("Enter input image filename: ")
     #in_img_name = "test.jpg"
@@ -118,13 +130,13 @@ if __name__ == "__main__":
         text_rows.append(temp_text_row)
         #print(temp_text_row)
 
-    print()
+    print("Finished!" + lotta_spaces + "\n")
 
     with open("out_text.txt", "w") as file:
         for row in text_rows:
             file.write(row + "\n")
 
-
+    print("\nGenerated ASCII Written to out_text.txt\n")
 
 
     # print("height: " + str(im_height))
