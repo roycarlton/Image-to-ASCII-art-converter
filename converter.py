@@ -45,19 +45,24 @@ def generate_character_images(min, max, font):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) == 4 or len(sys.argv) == 5:
+        in_img_name = sys.argv[1]
+        font_filename = sys.argv[2]
+        pixel_width = int(sys.argv[3])
+
+        #pixel width and height = size of each "pixel" we will take from the source img
+        #and convert to a character. One "pixel" = one character
+        #pixel_width = 2
+        if len(sys.argv) == 5:
+            pixel_height = int(sys.argv[4])
+        else:
+            pixel_height = int(pixel_width * 1.4)
+    
+
+    else:
         print("\nProgram requires exactly 3 arguments: source file name, font file name, pixel width")
         print("For example: python converter.py image.jpg, font.ttf, 5\n")
         exit()
-    
-    in_img_name = sys.argv[1]
-    font_filename = sys.argv[2]
-    pixel_width = int(sys.argv[3])
-
-    #pixel width and height = size of each "pixel" we will take from the source img
-    #and convert to a character. One "pixel" = one character
-    #pixel_width = 2
-    pixel_height = int(pixel_width * 1.4)
 
     font_size = 15
 
