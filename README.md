@@ -1,4 +1,8 @@
-This project is unfinished, but should be in a workable state.
+This project is in a workable state.
+
+Required libraries (not in the Python Standard Library):
+ - Numpy
+ - Python Imaging Library (PIL / Pillow)
 
 The "converter.py" script takes an image and generates lines of ASCII characters to ultimately resemble the source image.
 Converter.py takes either 3 or 4 arguments: source image file name/dir name, font file name, pixel width, (optional) pixel height
